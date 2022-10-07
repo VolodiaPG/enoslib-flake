@@ -13,50 +13,55 @@
         };
 
         lib = pkgs.lib;
+
+        enoslib = pkgs.python39Packages.buildPythonPackage rec {
+          pname = "enoslib";
+          version = "8.0.0a23";
+          src = pkgs.fetchgit {
+            url = "https://gitlab.inria.fr/discovery/enoslib";
+            rev = version;
+            sha256 = "sha256-tCMgdnyv7Lt6xf0LoJbndZpCyE91+YvbOn0VaLYwruY=";
+          };
+
+          propagatedBuildInputs = with pkgs.python39Packages; [
+            netaddr
+
+            rich'
+            cryptography
+            sshtunnel
+            ipywidgets
+            python-vagrant
+
+            pytz
+            distem'
+            iotlabsshcli'
+            ring'
+            diskcache'
+            execo'
+            jsonschema'
+            python-grid5000'
+
+            pkgs.ansible
+          ];
+
+          doCheck = false;
+        };
       in
       {
         formatter = pkgs.nixpkgs-fmt;
 
-        packages = rec {
-          enoslib = pkgs.python39Packages.buildPythonPackage rec {
-            pname = "enoslib";
-            version = "8.0.0a23";
-            src = pkgs.fetchgit {
-              url = "https://gitlab.inria.fr/discovery/enoslib";
-              rev = version;
-              sha256 = "sha256-tCMgdnyv7Lt6xf0LoJbndZpCyE91+YvbOn0VaLYwruY=";
-            };
-
-            propagatedBuildInputs = with pkgs.python39Packages; [
-              netaddr
-
-              rich'
-              cryptography
-              sshtunnel
-              ipywidgets
-              python-vagrant
-
-              pytz
-              distem'
-              iotlabsshcli'
-              ring'
-              diskcache'
-              execo'
-              jsonschema'
-              python-grid5000'
-
-              pkgs.ansible
-            ];
-            
-            doCheck = false;
-          };
+        packages = { 
+          enoslib = enoslib;
           default = enoslib;
         };
+        
+        overlay = import ./overlay.nix { inherit self; };
+
         devShell = pkgs.mkShell
           {
-            buildInputs = with pkgs;
+            buildInputs =
               [
-                self.packages.${system}.enoslib
+                enoslib
               ];
 
             inputsFrom = builtins.attrValues self.packages.${system};
