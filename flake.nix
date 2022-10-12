@@ -16,7 +16,7 @@
 
         enoslib = pkgs.python39Packages.buildPythonPackage rec {
           pname = "enoslib";
-          version = "8.0.0a23";
+          version = "v8.0.0.alpha-23";
           src = pkgs.fetchgit {
             url = "https://gitlab.inria.fr/discovery/enoslib";
             rev = version;
