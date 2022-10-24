@@ -16,11 +16,11 @@
 
         enoslib = pkgs.python39Packages.buildPythonPackage rec {
           pname = "enoslib";
-          version = "v8.0.0.alpha-23";
+          version = "v8.0.0.alpha-25";
           src = pkgs.fetchgit {
             url = "https://gitlab.inria.fr/discovery/enoslib";
             rev = version;
-            sha256 = "sha256-tCMgdnyv7Lt6xf0LoJbndZpCyE91+YvbOn0VaLYwruY=";
+            sha256 = "sha256-81g/YHbSbmnmcqJAHe5anI8AfneLzF5dsAHmFsfk+Gg=";
           };
 
           propagatedBuildInputs = with pkgs.python39Packages; [
