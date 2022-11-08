@@ -65,20 +65,6 @@ let
       };
       jsonschema = jsonschema';
 
-
-      diskcache' = python-prev.buildPythonPackage rec {
-        pname = "diskcache";
-        version = "3.1.1";
-        src = python-prev.fetchPypi {
-          inherit pname version;
-          sha256 = "sha256-9fpqInS8T8LxyIQDT5qxzIOAVEIf9JNSRzL1LMEXT7w=";
-        };
-        doCheck = false;
-        nativeBuildInputs = with python-prev; [
-          setuptools
-        ];
-      };
-
       argparse' = python-prev.buildPythonPackage rec {
         pname = "argparse";
         version = "1.4.0";

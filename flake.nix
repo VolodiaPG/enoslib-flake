@@ -16,11 +16,11 @@
 
         enoslib = pkgs.python39Packages.buildPythonPackage rec {
           pname = "enoslib";
-          version = "v8.0.0.alpha-25";
+          version = "v8.0.0";
           src = pkgs.fetchgit {
             url = "https://gitlab.inria.fr/discovery/enoslib";
             rev = version;
-            sha256 = "sha256-81g/YHbSbmnmcqJAHe5anI8AfneLzF5dsAHmFsfk+Gg=";
+            sha256 = "sha256-hVzS9jRMbnAYIeZcmOU2sPGbJioAqwbVOelejTcCFBI=";
           };
 
           propagatedBuildInputs = with pkgs.python39Packages; [
@@ -31,12 +31,12 @@
             sshtunnel
             ipywidgets
             python-vagrant
+            packaging
 
             pytz
             distem'
             iotlabsshcli'
             ring'
-            diskcache'
             execo'
             jsonschema'
             python-grid5000'
