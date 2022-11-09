@@ -1,70 +1,32 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
-    flake-utils.url = "github:numtide/flake-utils";
+    dream2nix.url = "github:nix-community/dream2nix";
+    src.url = "github:BeyondTheClouds/enoslib?rev=a9e30b09bd7d4191b5645f5c85191d94029938cd";
+    src.flake = false;
   };
 
-  outputs = { self, flake-utils, nixpkgs, ... }@inputs:
-    flake-utils.lib.eachDefaultSystem (system: # leverage flake-utils
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ (import ./requirements.nix) ];
-        };
+  outputs =
+    { self
+    , dream2nix
+    , src
+    ,
+    } @ inp:
+    (dream2nix.lib.makeFlakeOutputs {
+      systems = [ "x86_64-linux" ];
+      config.projectRoot = ./.;
+      source = src;
+      
+      settings = [
+        {
+          # optionally define python version
+          subsystemInfo.pythonAttr = "python310";
+        }
+      ];
+    })
+    // {
+      # checks.x86_64-linux.aiohttp = self.packages.x86_64-linux.main;
+      # default.x86_64-linux.default = self.packages.x86_64-linux.main;
+      defaultPackage = self.packages.x86_64-linux.main;
+    };
 
-        lib = pkgs.lib;
-
-        enoslib = pkgs.python39Packages.buildPythonPackage rec {
-          pname = "enoslib";
-          version = "v8.0.0";
-          src = pkgs.fetchgit {
-            url = "https://gitlab.inria.fr/discovery/enoslib";
-            rev = version;
-            sha256 = "sha256-hVzS9jRMbnAYIeZcmOU2sPGbJioAqwbVOelejTcCFBI=";
-          };
-
-          propagatedBuildInputs = with pkgs.python39Packages; [
-            netaddr
-
-            rich'
-            cryptography
-            sshtunnel
-            ipywidgets
-            python-vagrant
-            packaging
-
-            pytz
-            distem'
-            iotlabsshcli'
-            ring'
-            execo'
-            jsonschema'
-            python-grid5000'
-
-            pkgs.ansible
-          ];
-
-          doCheck = false;
-        };
-      in
-      {
-        formatter = pkgs.nixpkgs-fmt;
-
-        packages = { 
-          enoslib = enoslib;
-          default = enoslib;
-        };
-        
-        overlay = import ./overlay.nix { inherit self; };
-
-        devShell = pkgs.mkShell
-          {
-            buildInputs =
-              [
-                enoslib
-              ];
-
-            inputsFrom = builtins.attrValues self.packages.${system};
-          };
-      });
 }
